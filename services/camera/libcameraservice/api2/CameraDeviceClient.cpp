@@ -941,7 +941,7 @@ binder::Status CameraDeviceClient::createStream(
         res = SessionConfigurationUtils::createSurfaceFromGbp(streamInfo,
                 isStreamInfoValid, surface, bufferProducer, mCameraIdStr,
                 mDevice->infoPhysical(physicalCameraId), sensorPixelModesUsed, dynamicRangeProfile,
-                streamUseCase, timestampBase, mirrorMode, colorSpace);
+                streamUseCase, timestampBase, mirrorMode, colorSpace, mPrivilegedClient);
 
         if (!res.isOk())
             return res;
@@ -1314,7 +1314,7 @@ binder::Status CameraDeviceClient::updateOutputConfiguration(int streamId,
         res = SessionConfigurationUtils::createSurfaceFromGbp(outInfo,
                 /*isStreamInfoValid*/ false, surface, newOutputsMap.valueAt(i), mCameraIdStr,
                 mDevice->infoPhysical(physicalCameraId), sensorPixelModesUsed, dynamicRangeProfile,
-                streamUseCase, timestampBase, mirrorMode, colorSpace);
+                streamUseCase, timestampBase, mirrorMode, colorSpace, mPrivilegedClient);
         if (!res.isOk())
             return res;
 
@@ -1689,7 +1689,7 @@ binder::Status CameraDeviceClient::finalizeOutputConfigurations(int32_t streamId
         res = SessionConfigurationUtils::createSurfaceFromGbp(mStreamInfoMap[streamId],
                 true /*isStreamInfoValid*/, surface, bufferProducer, mCameraIdStr,
                 mDevice->infoPhysical(physicalId), sensorPixelModesUsed, dynamicRangeProfile,
-                streamUseCase, timestampBase, mirrorMode, colorSpace);
+                streamUseCase, timestampBase, mirrorMode, colorSpace, mPrivilegedClient);
 
         if (!res.isOk())
             return res;

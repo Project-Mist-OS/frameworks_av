@@ -430,7 +430,7 @@ binder::Status createSurfaceFromGbp(
         const String8 &logicalCameraId, const CameraMetadata &physicalCameraMetadata,
         const std::vector<int32_t> &sensorPixelModesUsed, int64_t dynamicRangeProfile,
         int64_t streamUseCase, int timestampBase, int mirrorMode,
-        int32_t colorSpace) {
+        int32_t colorSpace, bool isPriviledgedClient) {
     // bufferProducer must be non-null
     if (gbp == nullptr) {
         String8 msg = String8::format("Camera %s: Surface is NULL", logicalCameraId.string());
@@ -460,7 +460,7 @@ binder::Status createSurfaceFromGbp(
     uint64_t allowedFlags = GraphicBuffer::USAGE_SW_READ_MASK |
                            GraphicBuffer::USAGE_HW_TEXTURE |
                            GraphicBuffer::USAGE_HW_COMPOSER;
-    bool flexibleConsumer = (consumerUsage & disallowedFlags) == 0 &&
+    bool flexibleConsumer = !isPriviledgedClient && (consumerUsage & disallowedFlags) == 0 &&
             (consumerUsage & allowedFlags) != 0;
 
     surface = new Surface(gbp, useAsync);
@@ -681,7 +681,7 @@ convertToHALStreamCombination(
         bool isCompositeJpegRDisabled,
         metadataGetter getMetadata, const std::vector<std::string> &physicalCameraIds,
         aidl::android::hardware::camera::device::StreamConfiguration &streamConfiguration,
-        bool overrideForPerfClass, bool *earlyExit) {
+        bool overrideForPerfClass, bool *earlyExit, bool isPriviledgedClient) {
     using SensorPixelMode = aidl::android::hardware::camera::metadata::SensorPixelMode;
     auto operatingMode = sessionConfiguration.getOperatingMode();
     binder::Status res = checkOperatingMode(operatingMode, deviceInfo, logicalCameraId);
@@ -811,7 +811,7 @@ convertToHALStreamCombination(
             sp<Surface> surface;
             res = createSurfaceFromGbp(streamInfo, isStreamInfoValid, surface, bufferProducer,
                     logicalCameraId, metadataChosen, sensorPixelModesUsed, dynamicRangeProfile,
-                    streamUseCase, timestampBase, mirrorMode, colorSpace);
+                    streamUseCase, timestampBase, mirrorMode, colorSpace, isPriviledgedClient);
 
             if (!res.isOk())
                 return res;
