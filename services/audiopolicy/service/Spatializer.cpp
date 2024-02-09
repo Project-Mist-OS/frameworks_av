@@ -888,7 +888,7 @@ void Spatializer::onActualModeChangeMsg(HeadTrackingMode mode) {
                     spatializerMode = HeadTracking::Mode::RELATIVE_SCREEN;
                     break;
                 default:
-                    LOG_ALWAYS_FATAL("Unknown mode: %s", ToString(mode).c_str());
+                    LOG_ALWAYS_FATAL("Unknown mode: %d", static_cast<int>(mode));
             }
         }
         mActualHeadTrackingMode = spatializerMode;
